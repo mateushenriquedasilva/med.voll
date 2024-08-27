@@ -9,12 +9,14 @@ import med.voll.api.endereco.DadosEndereco;
 import med.voll.api.endereco.Endereco;
 import med.voll.api.medico.DadosAtualizarcaoMedico;
 import med.voll.api.medico.DadosCadastroMedico;
+import med.voll.api.medico.DadosDetalhamentoMedico;
 import med.voll.api.medico.DadosListagemMedicos;
 import med.voll.api.medico.Medico;
 import med.voll.api.medico.MedicoRepository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
@@ -32,39 +34,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("medicos")
 public class MedicoController {
 
-    @Autowired // o próprio spring vai instanciar e passar o atributo dentro da nossa classe
+    @Autowired
     private MedicoRepository repository;
     
     @PostMapping
-    @Transactional // Transação ativa com o banco de dados, porque vamos persistir dados no banco.
+    @Transactional
     public void cadastrar(@RequestBody @Valid DadosCadastroMedico dados) {
         repository.save(new Medico(dados));
     }
     
     @PutMapping
     @Transactional
-    public void atualizar(@RequestBody @Valid DadosAtualizarcaoMedico dados) {
+    public ResponseEntity<DadosDetalhamentoMedico> atualizar(@RequestBody @Valid DadosAtualizarcaoMedico dados) {
     	Medico medico = repository.getReferenceById(dados.id());
+    	medico.atualizarInformacoes(dados);	
     	
-    	if (medico != null) {
-    		Optional.ofNullable(dados.nome()).ifPresent(medico::setNome);
-    		Optional.ofNullable(dados.telefone()).ifPresent(medico::setTelefone);
-    		Optional.ofNullable(dados.endereco()).ifPresent(endereco -> new Endereco(dados.endereco()));
-    	}	
+    	return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
     
     @DeleteMapping("/{id}")
     @Transactional
-    public void excluir(@PathVariable Long id) {
+    public ResponseEntity<Object> excluir(@PathVariable Long id) {
     	Medico medico = repository.getReferenceById(id);
+    	medico.excluir();
     	
-    	if (medico != null) {
-    		medico.setAtivo(false);
-    	}
+    	return ResponseEntity.noContent().build();
     }
     
     @GetMapping
-    public Page<DadosListagemMedicos> listar(@PageableDefault(size = 10, sort = {"email"}) Pageable paginacao /*Trabalhando com paginacao*/) {
-    	return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedicos::new);
+    public ResponseEntity<Page<DadosListagemMedicos>> listar(@PageableDefault(size = 10, sort = {"email"}) Pageable paginacao /*Trabalhando com paginacao*/) {
+    	var page =  repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedicos::new);
+    	return ResponseEntity.ok(page);
     }
 }
