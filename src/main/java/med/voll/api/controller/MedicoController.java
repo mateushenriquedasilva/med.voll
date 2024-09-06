@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 @RestController
@@ -39,15 +40,20 @@ public class MedicoController {
     
     @PostMapping
     @Transactional
-    public void cadastrar(@RequestBody @Valid DadosCadastroMedico dados) {
-        repository.save(new Medico(dados));
+    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder) {
+        Medico medico = new Medico(dados);
+
+        repository.save(medico);
+        var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoMedico(medico));
     }
     
     @PutMapping
     @Transactional
     public ResponseEntity<DadosDetalhamentoMedico> atualizar(@RequestBody @Valid DadosAtualizarcaoMedico dados) {
     	Medico medico = repository.getReferenceById(dados.id());
-    	medico.atualizarInformacoes(dados);	
+    	medico.atualizarInformacoes(dados);
     	
     	return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
