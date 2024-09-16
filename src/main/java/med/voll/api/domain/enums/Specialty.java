@@ -1,6 +1,6 @@
-package med.voll.api.domain.medico;
+package med.voll.api.domain.enums;
 
-public enum Especialidade {
+public enum Specialty {
     ORTOPEDIA,
     CARDIOLOGIA,
     GINECOLOGIA,

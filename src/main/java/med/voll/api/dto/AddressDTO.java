@@ -1,9 +1,9 @@
-package med.voll.api.domain.endereco;
+package med.voll.api.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record DadosEndereco(
+public record AddressDTO(
 		@NotBlank
 		String logradouro,
 		@NotBlank
