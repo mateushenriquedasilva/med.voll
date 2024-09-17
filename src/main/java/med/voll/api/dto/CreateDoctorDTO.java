@@ -9,12 +9,12 @@ import med.voll.api.domain.enums.Specialty;
 
 public record CreateDoctorDTO(
 		@NotBlank
-		String nome,
+		String name,
 		@NotBlank
 		@Email
 		String email, 
 		@NotBlank
-		String telefone,
+		String telephone,
 		@NotBlank
 		@Pattern(regexp = "\\d{4,6}")
 		String crm, 
@@ -22,5 +22,5 @@ public record CreateDoctorDTO(
 		Specialty specialty,
 		@NotNull
 		@Valid // validar outro DTO
-		AddressDTO endereco) {
+		AddressDTO address) {
 }

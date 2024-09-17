@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotNull;
 public record UpdateDoctorDTO(
 		@NotNull
 		Long id, 
-		String nome, 
-		String telefone, 
-		AddressDTO endereco) {
+		String name,
+		String telephone,
+		AddressDTO address) {
 
 }

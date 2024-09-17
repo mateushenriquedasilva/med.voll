@@ -51,7 +51,7 @@ public class Doctor {
     }
 
     public void delete() {
-    	this.setAtivo(false);
+    	this.setActive(false);
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
